@@ -1,0 +1,13 @@
+.profilePage {
+  background-color: orange;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center;
+  justify-content: center; 
+  margin: auto;*/
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  height: 70%;
+}

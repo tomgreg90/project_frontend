@@ -1,25 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import SignUpPage from "./components/SignUpPage";
+import { Router } from "@reach/router";
+import LoginPage from "./components/LoginPage";
+import GroupSignUp from "./components/GroupSignUp";
+import { ApolloProvider } from "@apollo/react-hooks";
+import "./App.css";
+import MusicianList from "./components/MusicianList";
+import Header from "./components/Header";
+import ApolloClient from "apollo-boost";
+import Musician from "./components/Musician";
+import Group from "./components/Group";
+
+const client = new ApolloClient({
+  uri: "https://tomgreg-backend.herokuapp.com/graphql",
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <div className="App">
+        <Header />
+        <Router>
+          <SignUpPage path="/signup" />
+          <LoginPage path="/" />
+          <GroupSignUp path="/groupsignup" />
+          <MusicianList path="/musicians" />
+          <Musician path="/musicians/:musician_id" />
+          <Group path="/groups/:group_id" />
+        </Router>
+      </div>
+    </ApolloProvider>
   );
 }
 
