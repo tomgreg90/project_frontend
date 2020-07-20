@@ -10,9 +10,10 @@ import Header from "./components/Header";
 import ApolloClient from "apollo-boost";
 import Musician from "./components/Musician";
 import Group from "./components/Group";
+import MusicianSearch from "./components/MusicianSearch";
 
 const client = new ApolloClient({
-  uri: "https://tomgreg-backend.herokuapp.com/graphql",
+  uri: "http://localhost:4000/graphql",
 });
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <LoginPage path="/" />
           <GroupSignUp path="/groupsignup" />
           <MusicianList path="/musicians" />
+          <MusicianSearch path="/search" />
           <Musician path="/musicians/:musician_id" />
           <Group path="/groups/:group_id" />
         </Router>

@@ -5,18 +5,21 @@ import "./MusicianList.css";
 import { Link } from "@reach/router";
 
 const GET_MUSICIANS = gql`
-  {
-    musicians {
+  query GetMusicians($instrument: String!) {
+    musicians(instrument: $instrument) {
       id
       firstName
       lastName
       instrument
+      email
     }
   }
 `;
 
-export default function MusicianList() {
-  const { loading, error, data } = useQuery(GET_MUSICIANS);
+export default function MusicianList({ instrument }) {
+  const { loading, error, data } = useQuery(GET_MUSICIANS, {
+    variables: { instrument },
+  });
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
