@@ -13,7 +13,16 @@ import Group from "./components/Group";
 import Chat from "./components/Chat";
 
 const client = new ApolloClient({
-  uri: "https://tomgreg-backend.herokuapp.com/graphql",
+  uri: "http://localhost:4000/graphql",
+  request: (operation) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+  },
 });
 
 function App() {
