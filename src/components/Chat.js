@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import firebase from "../services/firebase";
+import "./Chat.css";
+const db = firebase.firestore();
 
 export default class Chat extends Component {
   state = {
     chat: [],
     message: "",
     user: "",
+    newMessage: "",
   };
 
   render() {
@@ -15,11 +18,35 @@ export default class Chat extends Component {
           onSubmit={(e) => {
             e.preventDefault();
 
-            firebase
-              .database()
-              .ref("james")
-              .child("Tom")
-              .push({ key: this.state.user, value: this.state.message });
+            db.collection("TomShaun")
+              .doc("chat")
+              .collection("users")
+              .doc("tom")
+              .set({
+                firstname: "tom",
+                lastname: "gregory",
+              });
+            db.collection("TomShaun")
+              .doc("chat")
+              .collection("users")
+              .doc("shaun")
+              .set({
+                firstname: "shaun",
+              });
+
+            db.collection("TomShaun")
+              .doc("chat")
+              .collection("users")
+              .doc("chat")
+              .collection("messages")
+              .doc()
+              .set({
+                from: this.state.user,
+                message: this.state.message,
+                timestamp: new Date().toDateString(
+                  firebase.firestore.FieldValue.serverTimestamp()
+                ),
+              });
           }}
         >
           <input
@@ -39,43 +66,47 @@ export default class Chat extends Component {
         <ul>
           {this.state.chat.map((chat) => {
             return (
-              <li>
-                <p>{chat.key}</p>
-                <p>{chat.value}</p>
+              <li className="message">
+                <p>{chat.timestamp}</p>
+                <p>{chat.from}</p>
+                <p>{chat.message}</p>
               </li>
             );
           })}
         </ul>
+        {this.state.newMessage && (
+          <div>
+            <p>{this.state.newMessage.timestamp}</p>
+            <p>{this.state.newMessage.from}</p>
+            <p>{this.state.newMessage.message}</p>
+          </div>
+        )}
       </div>
     );
   }
 
   componentDidMount = () => {
-    const chatRef = firebase.database().ref("james").child("Tom");
+    db.collection("TomShaun")
+      .doc("chat")
+      .collection("users")
+      .doc("chat")
+      .collection("messages")
+      .onSnapshot((snapshot) => {
+        const messages = [];
+        let newMessage;
 
-    chatRef.on("value", (snapshot) => {
-      let chatArray = [];
-      snapshot.forEach((snap) => {
-        const value = snap.val();
+        snapshot.forEach((doc) => {
+          console.log(doc.data());
+          messages.push(doc.data());
+        });
 
-        chatArray.push(value);
+        snapshot.docChanges().forEach(function (change) {
+          if (change.type === "added") {
+            newMessage = change.doc.data();
+          }
+        });
+
+        this.setState({ chat: messages, newMessage });
       });
-
-      this.setState({ chat: chatArray });
-    });
   };
-
-  // componentDidUpdate = (prevProps, prevState) => {
-  //   if (this.state.mesage !== prevState.message)
-  //     const chatRef = firebase.database().ref(prevState.user);
-  //   chatRef.on("value", (snapshot) => {
-  //     let chatArray = [];
-  //     snapshot.forEach((snap) => {
-  //       console.log(snap);
-  //       const key = snap.key;
-  //       const value = snap.val();
-  //       chatArray.push({ key, value });
-  //     });
-  //   });
-  // };
 }
